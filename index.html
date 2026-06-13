@@ -193,6 +193,824 @@
             color: #4A2A3A;
         }
 
+        .glass-card.centered {
+            text-align: center;
+        }
+
+        /* aviso especial */
+        .warning-note {
+            background: rgba(242,54,12,0.15);
+            border-left: 3px solid #F2360C;
+            border-radius: 16px;
+            padding: 0.6rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #FDC951;
+        }
+
+        body.light .warning-note {
+            background: rgba(242,54,12,0.1);
+            color: #860021;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stat-item {
+            background: linear-gradient(135deg, rgba(205,217,141,0.1), rgba(242,5,116,0.05));
+            border-radius: 32px;
+            padding: 1rem;
+            flex: 1;
+            text-align: center;
+            border: 1px solid rgba(242,5,116,0.3);
+        }
+
+        body.light .stat-item {
+            background: #FFF0F5;
+            border: 1px solid #F2C4DA;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #CDD98D, #F2360C);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        body.light .stat-number {
+            background: linear-gradient(135deg, #860021, #F20574);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(125deg, #F20574, #F2360C);
+            border: none;
+            border-radius: 60px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #F2C4DA;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        body.light .btn-gradient {
+            background: linear-gradient(125deg, #F2C4DA, #F20574);
+            color: #860021;
+        }
+
+        .btn-gradient:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(242,5,116,0.5);
+            color: #CDD98D;
+        }
+
+        .day-modern {
+            background: rgba(18, 18, 24, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+            border: 1px solid rgba(242,5,116,0.4);
+        }
+
+        body.light .day-modern {
+            background: rgba(255, 245, 240, 0.85);
+            border: 1px solid #F2C4DA;
+        }
+
+        .day-header {
+            background: linear-gradient(95deg, #860021, #F20574);
+            padding: 0.7rem 1.2rem;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #F2C4DA;
+        }
+
+        body.light .day-header {
+            background: linear-gradient(95deg, #F2C4DA, #F20574);
+            color: #4A2A3A;
+        }
+
+        .match-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid rgba(242,196,218,0.1);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        body.light .match-row {
+            border-bottom: 1px solid #F2C4DA;
+        }
+
+        .match-time {
+            font-weight: 600;
+            color: #CDD98D;
+            min-width: 100px;
+        }
+
+        body.light .match-time {
+            color: #F2360C;
+        }
+
+        .match-name {
+            flex: 2;
+        }
+        .match-stadium {
+            font-size: 0.75rem;
+            color: #F2C4DA;
+        }
+
+        body.light .match-stadium {
+            color: #915F7A;
+        }
+
+        .group-badge {
+            background: rgba(242,54,12,0.3);
+            border-radius: 40px;
+            padding: 0.1rem 0.7rem;
+            font-size: 0.65rem;
+            margin-left: 0.5rem;
+            border: 0.5px solid #F2360C;
+        }
+
+        body.light .group-badge {
+            background: #F2C4DA;
+            border-color: #860021;
+            color: #860021;
+        }
+
+        .knockout-card {
+            background: rgba(18, 18, 24, 0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid #F20574;
+        }
+
+        body.light .knockout-card {
+            background: rgba(255, 245, 240, 0.85);
+            border-left: 3px solid #F20574;
+        }
+
+        .knockout-title {
+            background: linear-gradient(95deg, #2a0a1a, #1a0510);
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            border-radius: 28px 28px 0 0;
+            color: #CDD98D;
+        }
+
+        body.light .knockout-title {
+            background: linear-gradient(95deg, #F2C4DA, #FFF0F5);
+            color: #860021;
+        }
+
+        .player-modern {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 2px solid #F20574;
+            transition: all 0.3s;
+        }
+
+        body.light .player-modern {
+            background: rgba(255, 245, 240, 0.8);
+            border: 2px solid #F2C4DA;
+        }
+
+        .video-box {
+            position: relative;
+            padding-bottom: 56.25%;
+        }
+        .video-box iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border: 0;
+        }
+        .player-bar {
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            background: rgba(0,0,0,0.6);
+            border-top: 1px solid #F20574;
+        }
+
+        body.light .player-bar {
+            background: rgba(255, 245, 240, 0.9);
+            border-top: 1px solid #F2C4DA;
+        }
+
+        .live-badge {
+            background: linear-gradient(95deg, #860021, #F20574);
+            border-radius: 40px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #F2C4DA;
+        }
+
+        body.light .live-badge {
+            background: linear-gradient(95deg, #F20574, #860021);
+            color: #FFF5F0;
+        }
+
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .server-card {
+            background: rgba(18, 18, 24, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(242,5,116,0.4);
+        }
+
+        body.light .server-card {
+            background: rgba(255, 245, 240, 0.85);
+            border: 1px solid #F2C4DA;
+            color: #4A2A3A;
+        }
+
+        .server-card:hover {
+            transform: translateY(-5px);
+            border-color: #CDD98D;
+            background: linear-gradient(135deg, rgba(205,217,141,0.1), rgba(242,5,116,0.08));
+        }
+
+        body.light .server-card:hover {
+            background: #FFF0F5;
+            border-color: #F20574;
+        }
+
+        .server-card.active {
+            border: 2px solid #F2360C;
+            background: linear-gradient(135deg, rgba(242,54,12,0.15), rgba(134,0,33,0.1));
+        }
+
+        body.light .server-card.active {
+            border: 2px solid #F20574;
+            background: #FCE8F0;
+        }
+
+        .server-name {
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+        .server-cat {
+            background: linear-gradient(125deg, #F20574, #860021);
+            border-radius: 30px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.6rem;
+            color: #F2C4DA;
+        }
+
+        body.light .server-cat {
+            background: linear-gradient(125deg, #F2C4DA, #F20574);
+            color: #860021;
+        }
+
+        .server-url {
+            font-size: 0.6rem;
+            font-family: monospace;
+            color: #CDD98D;
+            margin: 0.5rem 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        body.light .server-url {
+            color: #915F7A;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            border-top: 1px solid #F20574;
+            font-size: 0.65rem;
+            color: #CDD98D;
+        }
+
+        body.light footer {
+            border-top: 1px solid #F2C4DA;
+            color: #915F7A;
+        }
+
+        .kaomoji {
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 1rem; }
+            .match-row { flex-direction: column; align-items: flex-start; }
+            .glass-card { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">✧ MUNDIAL 2026 · FIFA (ง︡'-'︠)ง ✧</div>
+        <div class="theme-toggle" id="themeToggle">🌙 modo claro</div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="home"><span class="kaomoji">ᕙ(‘▿’)ᕗ</span> inicio</div>
+        <div class="tab" data-tab="calendar"><span class="kaomoji">t(>.<t)</span> calendario</div>
+        <div class="tab" data-tab="streams"><span class="kaomoji">^(‘-‘)^</span> 12 servidores</div>
+    </div>
+
+    <div id="home" class="tab-pane active">
+        <div class="glass-card">
+            <h1 style="font-size: 2rem; background: linear-gradient(125deg, #F20574, #F2360C, #CDD98D); -webkit-background-clip: text; background-clip: text; color: transparent;">FIFA World Cup 2026</h1>
+            <p style="margin: 0.5rem 0 1rem;">48 selecciones · 104 partidos · 12 canales en vivo</p>
+            <div class="stats">
+                <div class="stat-item"><div class="stat-number">48</div><div>PAISES</div></div>
+                <div class="stat-item"><div class="stat-number">104</div><div>PARTIDOS</div></div>
+                <div class="stat-item"><div class="stat-number">12</div><div>SEÑALES HD</div></div>
+            </div>
+            <button class="btn-gradient" id="goToStreamsBtn">🎬 ver transmision <span class="kaomoji">(ง’-’)ง</span></button>
+        </div>
+        <div class="glass-card centered" style="border-color:#F2360C;">
+            <p>✨ calendario organizado por dia · fase de grupos + eliminatorias completas</p>
+            <p>⚡ horarios en <strong>CDMX (centro de mexico)</strong> · formato 12h am/pm</p>
+            <p style="margin-top: 0.5rem;"><span class="kaomoji">v(‘.’)v</span> haz clic en un servidor y se desplazara automaticamente al reproductor <span class="kaomoji"><(‘.’)></span></p>
+            <div class="warning-note">
+                ⚠️ <strong>NOTA:</strong> Algunos servidores pueden abrir ventanas emergentes por requisitos técnicos.<br>
+                Se recomienda usar un <strong>adblocker</strong> o el navegador <strong>Brave</strong> para mejor experiencia.
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar" class="tab-pane">
+        <div id="calendarContainer"></div>
+    </div>
+
+    <div id="streams" class="tab-pane">
+        <div class="player-modern" id="playerSection">
+            <div class="video-box">
+                <iframe id="liveIframe" src="about:blank" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+            </div>
+            <div class="player-bar">
+                <div><span class="live-badge">🔴 en vivo</span> <strong id="currentChannelName">selecciona un servidor</strong></div>
+                <div>
+                    <button id="openTabBtn" class="btn-gradient" style="padding:0.3rem 1rem;">🔗 abrir pestaña</button>
+                    <button id="reloadStreamBtn" class="btn-gradient" style="padding:0.3rem 1rem;">⟳ recargar</button>
+                </div>
+            </div>
+        </div>
+        <div class="warning-note" style="margin-bottom: 0.5rem;">
+            ⚠️ <strong>AVISO IMPORTANTE:</strong> Los servidores externos pueden generar ventanas emergentes. Para evitarlas, usa <strong>uBlock Origin</strong> o el navegador <strong>Brave</strong> (bloquea popups automáticamente).
+        </div>
+        <h3 style="margin: 1rem 0 0.5rem; font-weight: 600;">📡 12 fuentes en directo <span class="kaomoji"><(‘.’)></span></h3>
+        <div class="servers-grid" id="serversGrid"></div>
+    </div>
+
+    <footer>
+        ⚡ servidores externos integrados · si algun canal falla, recarga o abre en nueva pestaña<br>
+        datos oficiales FIFA World Cup 2026™ · horarios <strong>CDMX (centro de mexico)</strong> · formato 12h am/pm<br>
+        <span class="kaomoji">ᕙ(‘▿’)ᕗ</span> <span class="kaomoji"> t(>.<t) </span> <span class="kaomoji">(ง’-’)ง</span> <span class="kaomoji">^(‘-‘)^</span> <span class="kaomoji">(>‘o’)></span> <span class="kaomoji">v(‘.’)v</span> <span class="kaomoji"><(‘.’)></span>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        function convertToMexicoCityTime(etTime24) {
+            let [hour, minute] = etTime24.split(':').map(Number);
+            let newHour = hour - 1;
+            if (newHour < 0) newHour += 24;
+            let period = newHour >= 12 ? 'PM' : 'AM';
+            let hour12 = newHour % 12;
+            if (hour12 === 0) hour12 = 12;
+            return `${hour12}:${minute.toString().padStart(2, '0')} ${period}`;
+        }
+
+        const matchesByDay = {
+            "JUEVES 11 JUNIO": [{ timeET:"15:00", match:"Mexico 2-0 Sudafrica", group:"Grupo A", stadium:"Estadio Ciudad de Mexico" },{ timeET:"22:00", match:"Republica de Corea 2-1 Republica Checa", group:"Grupo A", stadium:"Estadio Guadalajara" }],
+            "VIERNES 12 JUNIO": [{ timeET:"15:00", match:"Canada v Bosnia y Herzegovina", group:"Grupo B", stadium:"Estadio Toronto" },{ timeET:"21:00", match:"Estados Unidos v Paraguay", group:"Grupo D", stadium:"Estadio Los Angeles" }],
+            "SABADO 13 JUNIO": [{ timeET:"15:00", match:"Catar v Suiza", group:"Grupo B", stadium:"Estadio Bahia de San Francisco" },{ timeET:"18:00", match:"Brasil v Marruecos", group:"Grupo C", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"21:00", match:"Haiti v Escocia", group:"Grupo C", stadium:"Estadio Boston" },{ timeET:"00:00", match:"Australia v Turquia", group:"Grupo D", stadium:"Estadio BC Place Vancouver" }],
+            "DOMINGO 14 JUNIO": [{ timeET:"13:00", match:"Alemania v Curazao", group:"Grupo E", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Paises Bajos v Japon", group:"Grupo F", stadium:"Estadio Dallas" },{ timeET:"19:00", match:"Costa de Marfil v Ecuador", group:"Grupo E", stadium:"Estadio Filadelfia" },{ timeET:"22:00", match:"Suecia v Tunez", group:"Grupo F", stadium:"Estadio Monterrey" }],
+            "LUNES 15 JUNIO": [{ timeET:"12:00", match:"Espana v Cabo Verde", group:"Grupo H", stadium:"Estadio Atlanta" },{ timeET:"15:00", match:"Belgica v Egipto", group:"Grupo G", stadium:"Estadio Seattle" },{ timeET:"18:00", match:"Arabia Saudi v Uruguay", group:"Grupo H", stadium:"Estadio Miami" },{ timeET:"21:00", match:"RI de Iran v Nueva Zelanda", group:"Grupo G", stadium:"Estadio Los Angeles" }],
+            "MARTES 16 JUNIO": [{ timeET:"15:00", match:"Francia v Senegal", group:"Grupo I", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"18:00", match:"Irak v Noruega", group:"Grupo I", stadium:"Estadio Boston" },{ timeET:"21:00", match:"Argentina v Argelia", group:"Grupo J", stadium:"Estadio Kansas City" },{ timeET:"00:00", match:"Austria v Jordania", group:"Grupo J", stadium:"Estadio Bahia de San Francisco" }],
+            "MIERCOLES 17 JUNIO": [{ timeET:"13:00", match:"Portugal v RD Congo", group:"Grupo K", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Inglaterra v Croacia", group:"Grupo L", stadium:"Estadio Dallas" },{ timeET:"19:00", match:"Ghana v Panama", group:"Grupo L", stadium:"Estadio Toronto" },{ timeET:"22:00", match:"Uzbekistan v Colombia", group:"Grupo K", stadium:"Estadio Ciudad de Mexico" }],
+            "JUEVES 18 JUNIO": [{ timeET:"12:00", match:"Republica Checa v Sudafrica", group:"Grupo A", stadium:"Estadio Atlanta" },{ timeET:"15:00", match:"Suiza v Bosnia y Herzegovina", group:"Grupo B", stadium:"Estadio Los Angeles" },{ timeET:"18:00", match:"Canada v Catar", group:"Grupo B", stadium:"Estadio BC Place Vancouver" },{ timeET:"21:00", match:"Mexico v Republica de Corea", group:"Grupo A", stadium:"Estadio Guadalajara" }],
+            "VIERNES 19 JUNIO": [{ timeET:"15:00", match:"Estados Unidos v Australia", group:"Grupo D", stadium:"Estadio Seattle" },{ timeET:"18:00", match:"Escocia v Marruecos", group:"Grupo C", stadium:"Estadio Boston" },{ timeET:"21:00", match:"Brasil v Haiti", group:"Grupo C", stadium:"Estadio Filadelfia" },{ timeET:"00:00", match:"Turquia v Paraguay", group:"Grupo D", stadium:"Estadio Bahia de San Francisco" }],
+            "SABADO 20 JUNIO": [{ timeET:"13:00", match:"Paises Bajos v Suecia", group:"Grupo F", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Alemania v Costa de Marfil", group:"Grupo E", stadium:"Estadio Toronto" },{ timeET:"22:00", match:"Ecuador v Curazao", group:"Grupo E", stadium:"Estadio Kansas City" },{ timeET:"00:00", match:"Tunez v Japon", group:"Grupo F", stadium:"Estadio Monterrey" }],
+            "DOMINGO 21 JUNIO": [{ timeET:"12:00", match:"Espana v Arabia Saudi", group:"Grupo H", stadium:"Estadio Atlanta" },{ timeET:"15:00", match:"Belgica v Iran", group:"Grupo G", stadium:"Estadio Los Angeles" },{ timeET:"18:00", match:"Uruguay v Cabo Verde", group:"Grupo H", stadium:"Estadio Miami" },{ timeET:"21:00", match:"Nueva Zelanda v Egipto", group:"Grupo G", stadium:"Estadio BC Place Vancouver" }],
+            "LUNES 22 JUNIO": [{ timeET:"13:00", match:"Argentina v Austria", group:"Grupo J", stadium:"Estadio Dallas" },{ timeET:"17:00", match:"Francia v Irak", group:"Grupo I", stadium:"Estadio Filadelfia" },{ timeET:"20:00", match:"Noruega v Senegal", group:"Grupo I", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"23:00", match:"Jordania v Argelia", group:"Grupo J", stadium:"Estadio Bahia de San Francisco Bay" }],
+            "MARTES 23 JUNIO": [{ timeET:"13:00", match:"Portugal v Uzbekistan", group:"Grupo K", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Inglaterra v Ghana", group:"Grupo L", stadium:"Estadio Boston" },{ timeET:"19:00", match:"Panama v Croacia", group:"Grupo L", stadium:"Estadio Toronto" },{ timeET:"22:00", match:"Colombia v RD Congo", group:"Grupo K", stadium:"Estadio Guadalajara" }],
+            "MIERCOLES 24 JUNIO": [{ timeET:"15:00", match:"Suiza v Canada", group:"Grupo B", stadium:"Estadio BC Place Vancouver" },{ timeET:"15:00", match:"Bosnia y Herzegovina v Catar", group:"Grupo B", stadium:"Estadio Seattle" },{ timeET:"18:00", match:"Escocia v Brasil", group:"Grupo C", stadium:"Estadio Miami" },{ timeET:"18:00", match:"Marruecos v Haiti", group:"Grupo C", stadium:"Estadio Atlanta" },{ timeET:"21:00", match:"Republica Checa v Mexico", group:"Grupo A", stadium:"Estadio Ciudad de Mexico" },{ timeET:"21:00", match:"Sudafrica v Republica de Corea", group:"Grupo A", stadium:"Estadio Monterrey" }],
+            "JUEVES 25 JUNIO": [{ timeET:"16:00", match:"Curazao v Costa de Marfil", group:"Grupo E", stadium:"Estadio Filadelfia" },{ timeET:"16:00", match:"Ecuador v Alemania", group:"Grupo E", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"19:00", match:"Japon v Suecia", group:"Grupo F", stadium:"Estadio Dallas" },{ timeET:"19:00", match:"Tunez v Paises Bajos", group:"Grupo F", stadium:"Estadio Kansas City" },{ timeET:"22:00", match:"Turquia v Estados Unidos", group:"Grupo D", stadium:"Estadio Los Angeles" },{ timeET:"22:00", match:"Paraguay v Australia", group:"Grupo D", stadium:"Estadio Bahia de San Francisco" }],
+            "VIERNES 26 JUNIO": [{ timeET:"15:00", match:"Noruega v Francia", group:"Grupo I", stadium:"Estadio Boston" },{ timeET:"15:00", match:"Senegal v Irak", group:"Grupo I", stadium:"Estadio Toronto" },{ timeET:"20:00", match:"Cabo Verde v Arabia Saudi", group:"Grupo H", stadium:"Estadio Houston" },{ timeET:"20:00", match:"Uruguay v Espana", group:"Grupo H", stadium:"Estadio Guadalajara" },{ timeET:"23:00", match:"Egipto v Iran", group:"Grupo G", stadium:"Estadio Seattle" },{ timeET:"23:00", match:"Nueva Zelanda v Belgica", group:"Grupo G", stadium:"Estadio BC Place Vancouver" }],
+            "SABADO 27 JUNIO": [{ timeET:"17:00", match:"Panama v Inglaterra", group:"Grupo L", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"17:00", match:"Croacia v Ghana", group:"Grupo L", stadium:"Estadio Filadelfia" },{ timeET:"19:30", match:"Colombia v Portugal", group:"Grupo K", stadium:"Estadio Miami" },{ timeET:"19:30", match:"RD Congo v Uzbekistan", group:"Grupo K", stadium:"Estadio Atlanta" },{ timeET:"22:00", match:"Argelia v Austria", group:"Grupo J", stadium:"Estadio Kansas City" },{ timeET:"22:00", match:"Jordania v Argentina", group:"Grupo J", stadium:"Estadio Dallas" }]
+        };
+
+        const knockoutRounds = [
+            { round: "DIECISEISAVOS DE FINAL", matches: [
+                { date: "28 de junio", match: "2o Grupo A vs 2o Grupo B", stadium: "Los Angeles" },
+                { date: "29 de junio", match: "1o Grupo E vs 3o A/B/C/D/F", stadium: "Boston" },
+                { date: "29 de junio", match: "1o Grupo F vs 2o Grupo C", stadium: "Monterrey" },
+                { date: "29 de junio", match: "1o Grupo C vs 2o Grupo F", stadium: "Houston" },
+                { date: "30 de junio", match: "1o Grupo I vs 3o C/D/F/G/H", stadium: "Nueva York" },
+                { date: "30 de junio", match: "2o Grupo E vs 2o Grupo I", stadium: "Dallas" },
+                { date: "30 de junio", match: "1o Grupo A vs 3o C/E/F/H/I", stadium: "Ciudad de Mexico" },
+                { date: "1 de julio", match: "1o Grupo L vs 3o E/H/I/J/K", stadium: "Atlanta" },
+                { date: "1 de julio", match: "1o Grupo D vs 3o B/E/F/I/J", stadium: "Bahia de San Francisco" },
+                { date: "1 de julio", match: "1o Grupo G vs 3o A/E/H/I/J", stadium: "Seattle" },
+                { date: "2 de julio", match: "2o Grupo K vs 2o Grupo L", stadium: "Toronto" },
+                { date: "2 de julio", match: "1o Grupo H vs 2o Grupo J", stadium: "Los Angeles" },
+                { date: "2 de julio", match: "1o Grupo B vs 3o E/F/G/I/J", stadium: "Vancouver" },
+                { date: "3 de julio", match: "1o Grupo J vs 2o Grupo H", stadium: "Miami" },
+                { date: "3 de julio", match: "1o Grupo K vs 3o D/E/I/J/L", stadium: "Kansas City" },
+                { date: "3 de julio", match: "2o Grupo D vs 2o Grupo G", stadium: "Dallas" }
+            ]},
+            { round: "OCTAVOS DE FINAL", matches: [
+                { date: "4 de julio", match: "Gana Partido 74 vs Gana Partido 77", stadium: "Filadelfia" },
+                { date: "4 de julio", match: "Gana Partido 73 vs Gana Partido 75", stadium: "Houston" },
+                { date: "5 de julio", match: "Gana Partido 76 vs Gana Partido 78", stadium: "Nueva York" },
+                { date: "5 de julio", match: "Gana Partido 79 vs Gana Partido 80", stadium: "Ciudad de Mexico" },
+                { date: "6 de julio", match: "Gana Partido 83 vs Gana Partido 84", stadium: "Dallas" },
+                { date: "6 de julio", match: "Gana Partido 81 vs Gana Partido 82", stadium: "Seattle" },
+                { date: "7 de julio", match: "Gana Partido 86 vs Gana Partido 88", stadium: "Atlanta" },
+                { date: "7 de julio", match: "Gana Partido 85 vs Gana Partido 87", stadium: "Vancouver" }
+            ]},
+            { round: "CUARTOS DE FINAL", matches: [
+                { date: "9 de julio", match: "Gana Partido 89 vs Gana Partido 90", stadium: "Boston" },
+                { date: "10 de julio", match: "Gana Partido 93 vs Gana Partido 94", stadium: "Los Angeles" },
+                { date: "11 de julio", match: "Gana Partido 91 vs Gana Partido 92", stadium: "Miami" },
+                { date: "11 de julio", match: "Gana Partido 95 vs Gana Partido 96", stadium: "Kansas City" }
+            ]},
+            { round: "SEMIFINALES", matches: [
+                { date: "14 de julio", match: "Gana Partido 97 vs Gana Partido 98", stadium: "Dallas" },
+                { date: "15 de julio", match: "Gana Partido 99 vs Gana Partido 100", stadium: "Atlanta" }
+            ]},
+            { round: "TERCER PUESTO", matches: [
+                { date: "18 de julio", match: "Perdedor Semifinal 1 vs Perdedor Semifinal 2", stadium: "Miami" }
+            ]},
+            { round: "FINAL", matches: [
+                { date: "19 de julio", match: "Ganador Semifinal 1 vs Ganador Semifinal 2", stadium: "Nueva York Nueva Jersey" }
+            ]}
+        ];
+
+        function buildCalendar() {
+            const container = document.getElementById('calendarContainer');
+            if (!container) return;
+            let html = '';
+            
+            for (const [day, matches] of Object.entries(matchesByDay)) {
+                html += `<div class="day-modern"><div class="day-header"> ${day} · FASE DE GRUPOS</div>`;
+                matches.forEach(m => {
+                    const mexicoTime = convertToMexicoCityTime(m.timeET);
+                    html += `<div class="match-row">
+                                <div class="match-time">${mexicoTime}</div>
+                                <div class="match-name">${m.match} <span class="group-badge">${m.group}</span></div>
+                                <div class="match-stadium"> ${m.stadium}</div>
+                             </div>`;
+                });
+                html += `</div>`;
+            }
+            
+            html += `<div style="margin-top: 2rem;"><h3 style="color:#CDD98D; margin-bottom:1rem;"> ELIMINATORIAS DIRECTAS</h3>`;
+            knockoutRounds.forEach(round => {
+                html += `<div class="knockout-card"><div class="knockout-title"> ${round.round}</div>`;
+                round.matches.forEach(m => {
+                    html += `<div class="match-row">
+                                <div class="match-time"> ${m.date}</div>
+                                <div class="match-name">${m.match}</div>
+                                <div class="match-stadium"> ${m.stadium}</div>
+                             </div>`;
+                });
+                html += `</div>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+        buildCalendar();
+
+        const servers = [
+            { name:"DSports HD", url:"https://stream-xhd.com/live1.php?stream=dsports", cat:"Deportes" },
+            { name:"DIRECTV SPORTS", url:"https://canalesdeportivos.net/directvsports.php", cat:"Futbol" },
+            { name:"TAMAV T1", url:"https://tabav.mov/tamav/?t=1", cat:"Stream" },
+            { name:"ESPORTES EMBED", url:"https://esportesembed.com/coreia-do-sul-x-republica-tcheca-1", cat:"Mundial" },
+            { name:"DLHD PK", url:"https://dlhd.pk/stream/stream-116.php", cat:"HD" },
+            { name:"BESTLEAGUE", url:"https://bestleague.top/tok.html?get=RHNwb3J0c19VWQ==", cat:"Liga" },
+            { name:"CARTELIVE CLUB", url:"https://cartelive.club/player/3/1", cat:"Variado" },
+            { name:"PLAYVI PREMIER", url:"https://playvi.click/premier3.php", cat:"Premier" },
+            { name:"SUDAMERICA PLAY 2", url:"https://sudamericaplay2.com/canal_8112/dsports4541.html", cat:"DSports" },
+            { name:"SPORTTS ONLINE", url:"https://ww2.sporttsonline.click/channels/hd/hd1.php", cat:"HD+" },
+            { name:"SPORTSPASS MEX", url:"https://sportspass.fit/soccer/mexico.html", cat:"Liga MX" },
+            { name:"TELEMUNDO", url:"https://sudamericaplay2.com/canal_8112/74telemundo.html", cat:"Noticias" }
+        ];
+
+        let currentStream = "";
+        const iframe = document.getElementById('liveIframe');
+        const channelSpan = document.getElementById('currentChannelName');
+
+        function setStream(url, name) {
+            if (!url) return;
+            currentStream = url;
+            iframe.src = url;
+            channelSpan.innerText = name;
+        }
+
+        function scrollToPlayer() {
+            const playerSection = document.getElementById('playerSection');
+            if (playerSection) {
+                playerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                playerSection.style.borderColor = '#CDD98D';
+                playerSection.style.boxShadow = '0 0 25px rgba(205,217,141,0.5)';
+                setTimeout(() => {
+                    playerSection.style.borderColor = '#F20574';
+                    playerSection.style.boxShadow = 'none';
+                }, 800);
+            }
+        }
+
+        function renderServers() {
+            const grid = document.getElementById('serversGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            servers.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'server-card';
+                card.innerHTML = `
+                    <div class="server-name">${s.name} <span class="server-cat">${s.cat}</span></div>
+                    <div class="server-url">${s.url.substring(0,42)}...</div>
+                    <div style="font-size:0.65rem; color:#F2C4DA;">seleccionar canal</div>
+                `;
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.server-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    setStream(s.url, s.name);
+                    scrollToPlayer();
+                });
+                grid.appendChild(card);
+            });
+            if (servers.length) {
+                setStream(servers[0].url, servers[0].name);
+                if (grid.firstChild) grid.firstChild.classList.add('active');
+            }
+        }
+        renderServers();
+
+        const openTabBtn = document.getElementById('openTabBtn');
+        const reloadBtn = document.getElementById('reloadStreamBtn');
+        const goToStreamsBtn = document.getElementById('goToStreamsBtn');
+
+        if (openTabBtn) {
+            openTabBtn.addEventListener('click', () => {
+                if (currentStream) window.open(currentStream, '_blank');
+            });
+        }
+        if (reloadBtn) {
+            reloadBtn.addEventListener('click', () => {
+                if (currentStream) {
+                    const temp = currentStream;
+                    iframe.src = 'about:blank';
+                    setTimeout(() => { iframe.src = temp; }, 100);
+                }
+            });
+        }
+        if (goToStreamsBtn) {
+            goToStreamsBtn.addEventListener('click', () => {
+                const tab = Array.from(document.querySelectorAll('.tab')).find(t => t.getAttribute('data-tab') === 'streams');
+                if (tab) tab.click();
+                setTimeout(scrollToPlayer, 300);
+            });
+        }
+
+        const tabs = document.querySelectorAll('.tab');
+        const panes = document.querySelectorAll('.tab-pane');
+        
+        function activateTab(tabId) {
+            tabs.forEach(tab => {
+                const target = tab.getAttribute('data-tab');
+                if (target === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            panes.forEach(pane => {
+                if (pane.id === tabId) {
+                    pane.classList.add('active');
+                } else {
+                    pane.classList.remove('active');
+                }
+            });
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = tab.getAttribute('data-tab');
+                activateTab(targetId);
+            });
+        });
+
+        const themeToggle = document.getElementById('themeToggle');
+        let light = false;
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                light = !light;
+                if (light) {
+                    document.body.classList.add('light');
+                    themeToggle.innerHTML = "☀️ modo oscuro";
+                } else {
+                    document.body.classList.remove('light');
+                    themeToggle.innerHTML = "🌙 modo claro";
+                }
+            });
+        }
+    })();
+</script>
+</body>
+</html>            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(242,5,116,0.15) 0%, rgba(205,217,141,0.08) 40%, transparent 70%),
+                        radial-gradient(circle at 80% 70%, rgba(242,54,12,0.12) 0%, rgba(134,0,33,0.1) 60%, transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(10, 10, 18, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 80px;
+            padding: 0.6rem 1.8rem;
+            border: 1px solid rgba(242,5,116,0.4);
+            transition: all 0.3s ease;
+        }
+
+        body.light .header {
+            background: rgba(255, 245, 240, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid #F2C4DA;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(125deg, #F20574, #F2360C, #CDD98D);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        body.light .logo {
+            background: linear-gradient(125deg, #D63346, #F2360C, #860021);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .theme-toggle {
+            background: rgba(30,30,40,0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid #F20574;
+            border-radius: 60px;
+            padding: 0.3rem 1.2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: #F2C4DA;
+            transition: 0.2s;
+        }
+
+        body.light .theme-toggle {
+            background: #F2C4DA;
+            border-color: #860021;
+            color: #860021;
+        }
+
+        .theme-toggle:hover {
+            background: #860021;
+            color: #CDD98D;
+            border-color: #CDD98D;
+        }
+
+        body.light .theme-toggle:hover {
+            background: #860021;
+            color: #F2C4DA;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .tab {
+            background: rgba(30,30,38,0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(242,5,116,0.3);
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #F2C4DA;
+            transition: all 0.25s;
+        }
+
+        body.light .tab {
+            background: rgba(242,196,218,0.5);
+            border: 1px solid #F2C4DA;
+            color: #860021;
+        }
+
+        .tab.active {
+            background: linear-gradient(125deg, #860021, #F20574);
+            color: #CDD98D;
+            border-color: #F2360C;
+            box-shadow: 0 0 15px rgba(242,5,116,0.5);
+        }
+
+        body.light .tab.active {
+            background: linear-gradient(125deg, #F20574, #860021);
+            color: #FFF5F0;
+            border-color: #F2360C;
+        }
+
+        .tab:hover:not(.active) {
+            background: linear-gradient(125deg, #F20574, #F2360C);
+            color: #fff;
+        }
+
+        body.light .tab:hover:not(.active) {
+            background: linear-gradient(125deg, #F2C4DA, #F20574);
+            color: #4A2A3A;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .glass-card {
+            background: rgba(18, 18, 24, 0.55);
+            backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(242,196,218,0.2);
+            transition: all 0.3s ease;
+        }
+
+        body.light .glass-card {
+            background: rgba(255, 248, 245, 0.85);
+            border: 1px solid #F2C4DA;
+            color: #4A2A3A;
+        }
+
         .stats {
             display: flex;
             flex-wrap: wrap;
