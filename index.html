@@ -197,7 +197,6 @@
             text-align: center;
         }
 
-        /* aviso especial */
         .warning-note {
             background: rgba(242,54,12,0.15);
             border-left: 3px solid #F2360C;
@@ -290,6 +289,11 @@
             font-weight: 700;
             font-size: 1rem;
             color: #F2C4DA;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         body.light .day-header {
@@ -346,6 +350,55 @@
             background: #F2C4DA;
             border-color: #860021;
             color: #860021;
+        }
+
+        .notify-btn {
+            background: rgba(242,5,116,0.2);
+            border: 1px solid #F20574;
+            border-radius: 40px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #F2C4DA;
+            font-weight: 600;
+        }
+
+        .notify-btn:hover:not(:disabled) {
+            background: #F20574;
+            color: white;
+        }
+
+        .notify-btn.active {
+            background: #F20574;
+            color: white;
+        }
+
+        .notify-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(100,100,100,0.3);
+            border-color: gray;
+        }
+
+        body.light .notify-btn {
+            color: #860021;
+            border-color: #860021;
+        }
+
+        body.light .notify-btn.active {
+            background: #860021;
+            color: white;
+        }
+
+        .result-badge {
+            background: #CDD98D;
+            color: #1a0a12;
+            border-radius: 40px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
         }
 
         .knockout-card {
@@ -528,6 +581,7 @@
             .container { padding: 1rem; }
             .match-row { flex-direction: column; align-items: flex-start; }
             .glass-card { padding: 1.2rem; }
+            .day-header { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -601,9 +655,68 @@
 
 <script>
     (function() {
+        // ==============================================================
+        // NOTIFICACIONES
+        // ==============================================================
+        let notificationPermission = false;
+        let activeTimers = {};
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission === 'granted') {
+                    notificationPermission = true;
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            notificationPermission = true;
+                            showNotification('🔔 Notificaciones activadas', 'Recibirás avisos de los partidos que elijas');
+                        }
+                    });
+                }
+            }
+        }
+
+        function showNotification(title, body) {
+            if (notificationPermission && 'Notification' in window) {
+                new Notification(title, { body: body, icon: 'https://cdn-icons-png.flaticon.com/512/940/940125.png' });
+            }
+        }
+
+        function scheduleMatchNotification(matchId, matchName, matchDateTime) {
+            // Limpiar timers existentes
+            if (activeTimers[matchId]) {
+                clearTimeout(activeTimers[matchId]);
+                clearTimeout(activeTimers[`${matchId}_10min`]);
+            }
+
+            const now = new Date();
+            const matchTime = new Date(matchDateTime);
+            const tenMinutesBefore = new Date(matchTime.getTime() - (10 * 60 * 1000));
+
+            // Solo programar si el partido es en el futuro
+            if (matchTime > now) {
+                // Notificación 10 minutos antes
+                if (tenMinutesBefore > now) {
+                    activeTimers[`${matchId}_10min`] = setTimeout(() => {
+                        showNotification('⏰ 10 MINUTOS', `¡${matchName} empieza en 10 minutos! ⚽`);
+                    }, tenMinutesBefore - now);
+                }
+
+                // Notificación al inicio
+                activeTimers[matchId] = setTimeout(() => {
+                    showNotification('🔴 ¡YA COMENZÓ!', `${matchName} ya está en curso. ¡No te lo pierdas! ⚽🔥`);
+                }, matchTime - now);
+                return true;
+            }
+            return false;
+        }
+
+        // ==============================================================
+        // CONVERTIR HORA ET A CDMX (restar 2 horas)
+        // ==============================================================
         function convertToMexicoCityTime(etTime24) {
             let [hour, minute] = etTime24.split(':').map(Number);
-            let newHour = hour - 1;
+            let newHour = hour - 2;
             if (newHour < 0) newHour += 24;
             let period = newHour >= 12 ? 'PM' : 'AM';
             let hour12 = newHour % 12;
@@ -611,108 +724,288 @@
             return `${hour12}:${minute.toString().padStart(2, '0')} ${period}`;
         }
 
-        const matchesByDay = {
-            "JUEVES 11 JUNIO": [{ timeET:"15:00", match:"Mexico 2-0 Sudafrica", group:"Grupo A", stadium:"Estadio Ciudad de Mexico" },{ timeET:"22:00", match:"Republica de Corea 2-1 Republica Checa", group:"Grupo A", stadium:"Estadio Guadalajara" }],
-            "VIERNES 12 JUNIO": [{ timeET:"15:00", match:"Canada v Bosnia y Herzegovina", group:"Grupo B", stadium:"Estadio Toronto" },{ timeET:"21:00", match:"Estados Unidos v Paraguay", group:"Grupo D", stadium:"Estadio Los Angeles" }],
-            "SABADO 13 JUNIO": [{ timeET:"15:00", match:"Catar v Suiza", group:"Grupo B", stadium:"Estadio Bahia de San Francisco" },{ timeET:"18:00", match:"Brasil v Marruecos", group:"Grupo C", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"21:00", match:"Haiti v Escocia", group:"Grupo C", stadium:"Estadio Boston" },{ timeET:"00:00", match:"Australia v Turquia", group:"Grupo D", stadium:"Estadio BC Place Vancouver" }],
-            "DOMINGO 14 JUNIO": [{ timeET:"13:00", match:"Alemania v Curazao", group:"Grupo E", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Paises Bajos v Japon", group:"Grupo F", stadium:"Estadio Dallas" },{ timeET:"19:00", match:"Costa de Marfil v Ecuador", group:"Grupo E", stadium:"Estadio Filadelfia" },{ timeET:"22:00", match:"Suecia v Tunez", group:"Grupo F", stadium:"Estadio Monterrey" }],
-            "LUNES 15 JUNIO": [{ timeET:"12:00", match:"Espana v Cabo Verde", group:"Grupo H", stadium:"Estadio Atlanta" },{ timeET:"15:00", match:"Belgica v Egipto", group:"Grupo G", stadium:"Estadio Seattle" },{ timeET:"18:00", match:"Arabia Saudi v Uruguay", group:"Grupo H", stadium:"Estadio Miami" },{ timeET:"21:00", match:"RI de Iran v Nueva Zelanda", group:"Grupo G", stadium:"Estadio Los Angeles" }],
-            "MARTES 16 JUNIO": [{ timeET:"15:00", match:"Francia v Senegal", group:"Grupo I", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"18:00", match:"Irak v Noruega", group:"Grupo I", stadium:"Estadio Boston" },{ timeET:"21:00", match:"Argentina v Argelia", group:"Grupo J", stadium:"Estadio Kansas City" },{ timeET:"00:00", match:"Austria v Jordania", group:"Grupo J", stadium:"Estadio Bahia de San Francisco" }],
-            "MIERCOLES 17 JUNIO": [{ timeET:"13:00", match:"Portugal v RD Congo", group:"Grupo K", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Inglaterra v Croacia", group:"Grupo L", stadium:"Estadio Dallas" },{ timeET:"19:00", match:"Ghana v Panama", group:"Grupo L", stadium:"Estadio Toronto" },{ timeET:"22:00", match:"Uzbekistan v Colombia", group:"Grupo K", stadium:"Estadio Ciudad de Mexico" }],
-            "JUEVES 18 JUNIO": [{ timeET:"12:00", match:"Republica Checa v Sudafrica", group:"Grupo A", stadium:"Estadio Atlanta" },{ timeET:"15:00", match:"Suiza v Bosnia y Herzegovina", group:"Grupo B", stadium:"Estadio Los Angeles" },{ timeET:"18:00", match:"Canada v Catar", group:"Grupo B", stadium:"Estadio BC Place Vancouver" },{ timeET:"21:00", match:"Mexico v Republica de Corea", group:"Grupo A", stadium:"Estadio Guadalajara" }],
-            "VIERNES 19 JUNIO": [{ timeET:"15:00", match:"Estados Unidos v Australia", group:"Grupo D", stadium:"Estadio Seattle" },{ timeET:"18:00", match:"Escocia v Marruecos", group:"Grupo C", stadium:"Estadio Boston" },{ timeET:"21:00", match:"Brasil v Haiti", group:"Grupo C", stadium:"Estadio Filadelfia" },{ timeET:"00:00", match:"Turquia v Paraguay", group:"Grupo D", stadium:"Estadio Bahia de San Francisco" }],
-            "SABADO 20 JUNIO": [{ timeET:"13:00", match:"Paises Bajos v Suecia", group:"Grupo F", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Alemania v Costa de Marfil", group:"Grupo E", stadium:"Estadio Toronto" },{ timeET:"22:00", match:"Ecuador v Curazao", group:"Grupo E", stadium:"Estadio Kansas City" },{ timeET:"00:00", match:"Tunez v Japon", group:"Grupo F", stadium:"Estadio Monterrey" }],
-            "DOMINGO 21 JUNIO": [{ timeET:"12:00", match:"Espana v Arabia Saudi", group:"Grupo H", stadium:"Estadio Atlanta" },{ timeET:"15:00", match:"Belgica v Iran", group:"Grupo G", stadium:"Estadio Los Angeles" },{ timeET:"18:00", match:"Uruguay v Cabo Verde", group:"Grupo H", stadium:"Estadio Miami" },{ timeET:"21:00", match:"Nueva Zelanda v Egipto", group:"Grupo G", stadium:"Estadio BC Place Vancouver" }],
-            "LUNES 22 JUNIO": [{ timeET:"13:00", match:"Argentina v Austria", group:"Grupo J", stadium:"Estadio Dallas" },{ timeET:"17:00", match:"Francia v Irak", group:"Grupo I", stadium:"Estadio Filadelfia" },{ timeET:"20:00", match:"Noruega v Senegal", group:"Grupo I", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"23:00", match:"Jordania v Argelia", group:"Grupo J", stadium:"Estadio Bahia de San Francisco Bay" }],
-            "MARTES 23 JUNIO": [{ timeET:"13:00", match:"Portugal v Uzbekistan", group:"Grupo K", stadium:"Estadio Houston" },{ timeET:"16:00", match:"Inglaterra v Ghana", group:"Grupo L", stadium:"Estadio Boston" },{ timeET:"19:00", match:"Panama v Croacia", group:"Grupo L", stadium:"Estadio Toronto" },{ timeET:"22:00", match:"Colombia v RD Congo", group:"Grupo K", stadium:"Estadio Guadalajara" }],
-            "MIERCOLES 24 JUNIO": [{ timeET:"15:00", match:"Suiza v Canada", group:"Grupo B", stadium:"Estadio BC Place Vancouver" },{ timeET:"15:00", match:"Bosnia y Herzegovina v Catar", group:"Grupo B", stadium:"Estadio Seattle" },{ timeET:"18:00", match:"Escocia v Brasil", group:"Grupo C", stadium:"Estadio Miami" },{ timeET:"18:00", match:"Marruecos v Haiti", group:"Grupo C", stadium:"Estadio Atlanta" },{ timeET:"21:00", match:"Republica Checa v Mexico", group:"Grupo A", stadium:"Estadio Ciudad de Mexico" },{ timeET:"21:00", match:"Sudafrica v Republica de Corea", group:"Grupo A", stadium:"Estadio Monterrey" }],
-            "JUEVES 25 JUNIO": [{ timeET:"16:00", match:"Curazao v Costa de Marfil", group:"Grupo E", stadium:"Estadio Filadelfia" },{ timeET:"16:00", match:"Ecuador v Alemania", group:"Grupo E", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"19:00", match:"Japon v Suecia", group:"Grupo F", stadium:"Estadio Dallas" },{ timeET:"19:00", match:"Tunez v Paises Bajos", group:"Grupo F", stadium:"Estadio Kansas City" },{ timeET:"22:00", match:"Turquia v Estados Unidos", group:"Grupo D", stadium:"Estadio Los Angeles" },{ timeET:"22:00", match:"Paraguay v Australia", group:"Grupo D", stadium:"Estadio Bahia de San Francisco" }],
-            "VIERNES 26 JUNIO": [{ timeET:"15:00", match:"Noruega v Francia", group:"Grupo I", stadium:"Estadio Boston" },{ timeET:"15:00", match:"Senegal v Irak", group:"Grupo I", stadium:"Estadio Toronto" },{ timeET:"20:00", match:"Cabo Verde v Arabia Saudi", group:"Grupo H", stadium:"Estadio Houston" },{ timeET:"20:00", match:"Uruguay v Espana", group:"Grupo H", stadium:"Estadio Guadalajara" },{ timeET:"23:00", match:"Egipto v Iran", group:"Grupo G", stadium:"Estadio Seattle" },{ timeET:"23:00", match:"Nueva Zelanda v Belgica", group:"Grupo G", stadium:"Estadio BC Place Vancouver" }],
-            "SABADO 27 JUNIO": [{ timeET:"17:00", match:"Panama v Inglaterra", group:"Grupo L", stadium:"Estadio Nueva York Nueva Jersey" },{ timeET:"17:00", match:"Croacia v Ghana", group:"Grupo L", stadium:"Estadio Filadelfia" },{ timeET:"19:30", match:"Colombia v Portugal", group:"Grupo K", stadium:"Estadio Miami" },{ timeET:"19:30", match:"RD Congo v Uzbekistan", group:"Grupo K", stadium:"Estadio Atlanta" },{ timeET:"22:00", match:"Argelia v Austria", group:"Grupo J", stadium:"Estadio Kansas City" },{ timeET:"22:00", match:"Jordania v Argentina", group:"Grupo J", stadium:"Estadio Dallas" }]
+        function getHour24FromET(etTime24) {
+            let [hour, minute] = etTime24.split(':').map(Number);
+            let newHour = hour - 2;
+            if (newHour < 0) newHour += 24;
+            return { hour: newHour, minute: minute };
+        }
+
+        // ==============================================================
+        // DATOS DE PARTIDOS CON RESULTADOS ACTUALIZADOS
+        // Los partidos pasados tienen marcador final, los futuros tienen "vs"
+        // ==============================================================
+        const matchesData = {
+            "JUEVES 11 JUNIO": [
+                { timeET:"15:00", match:"Mexico 2-0 Sudafrica", originalMatch:"Mexico v Sudafrica", result:"2-0", isPast: true, group:"Grupo A", stadium:"Estadio Ciudad de Mexico" },
+                { timeET:"22:00", match:"Republica de Corea 2-1 Republica Checa", originalMatch:"Republica de Corea v Republica Checa", result:"2-1", isPast: true, group:"Grupo A", stadium:"Estadio Guadalajara" }
+            ],
+            "VIERNES 12 JUNIO": [
+                { timeET:"15:00", match:"Canada vs Bosnia y Herzegovina", originalMatch:"Canada v Bosnia y Herzegovina", result: null, isPast: false, group:"Grupo B", stadium:"Estadio Toronto" },
+                { timeET:"21:00", match:"Estados Unidos vs Paraguay", originalMatch:"Estados Unidos v Paraguay", result: null, isPast: false, group:"Grupo D", stadium:"Estadio Los Angeles" }
+            ],
+            "SABADO 13 JUNIO": [
+                { timeET:"15:00", match:"Catar vs Suiza", originalMatch:"Catar v Suiza", result: null, isPast: false, group:"Grupo B", stadium:"Estadio Bahia de San Francisco" },
+                { timeET:"18:00", match:"Brasil vs Marruecos", originalMatch:"Brasil v Marruecos", result: null, isPast: false, group:"Grupo C", stadium:"Estadio Nueva York Nueva Jersey" },
+                { timeET:"21:00", match:"Haiti vs Escocia", originalMatch:"Haiti v Escocia", result: null, isPast: false, group:"Grupo C", stadium:"Estadio Boston" },
+                { timeET:"00:00", match:"Australia vs Turquia", originalMatch:"Australia v Turquia", result: null, isPast: false, group:"Grupo D", stadium:"Estadio BC Place Vancouver" }
+            ],
+            "DOMINGO 14 JUNIO": [
+                { timeET:"13:00", match:"Alemania vs Curazao", originalMatch:"Alemania v Curazao", result: null, isPast: false, group:"Grupo E", stadium:"Estadio Houston" },
+                { timeET:"16:00", match:"Paises Bajos vs Japon", originalMatch:"Paises Bajos v Japon", result: null, isPast: false, group:"Grupo F", stadium:"Estadio Dallas" },
+                { timeET:"19:00", match:"Costa de Marfil vs Ecuador", originalMatch:"Costa de Marfil v Ecuador", result: null, isPast: false, group:"Grupo E", stadium:"Estadio Filadelfia" },
+                { timeET:"22:00", match:"Suecia vs Tunez", originalMatch:"Suecia v Tunez", result: null, isPast: false, group:"Grupo F", stadium:"Estadio Monterrey" }
+            ],
+            "LUNES 15 JUNIO": [
+                { timeET:"12:00", match:"Espana vs Cabo Verde", originalMatch:"Espana v Cabo Verde", result: null, isPast: false, group:"Grupo H", stadium:"Estadio Atlanta" },
+                { timeET:"15:00", match:"Belgica vs Egipto", originalMatch:"Belgica v Egipto", result: null, isPast: false, group:"Grupo G", stadium:"Estadio Seattle" },
+                { timeET:"18:00", match:"Arabia Saudi vs Uruguay", originalMatch:"Arabia Saudi v Uruguay", result: null, isPast: false, group:"Grupo H", stadium:"Estadio Miami" },
+                { timeET:"21:00", match:"RI de Iran vs Nueva Zelanda", originalMatch:"RI de Iran v Nueva Zelanda", result: null, isPast: false, group:"Grupo G", stadium:"Estadio Los Angeles" }
+            ],
+            "MARTES 16 JUNIO": [
+                { timeET:"15:00", match:"Francia vs Senegal", originalMatch:"Francia v Senegal", result: null, isPast: false, group:"Grupo I", stadium:"Estadio Nueva York Nueva Jersey" },
+                { timeET:"18:00", match:"Irak vs Noruega", originalMatch:"Irak v Noruega", result: null, isPast: false, group:"Grupo I", stadium:"Estadio Boston" },
+                { timeET:"21:00", match:"Argentina vs Argelia", originalMatch:"Argentina v Argelia", result: null, isPast: false, group:"Grupo J", stadium:"Estadio Kansas City" },
+                { timeET:"00:00", match:"Austria vs Jordania", originalMatch:"Austria v Jordania", result: null, isPast: false, group:"Grupo J", stadium:"Estadio Bahia de San Francisco" }
+            ],
+            "MIERCOLES 17 JUNIO": [
+                { timeET:"13:00", match:"Portugal vs RD Congo", originalMatch:"Portugal v RD Congo", result: null, isPast: false, group:"Grupo K", stadium:"Estadio Houston" },
+                { timeET:"16:00", match:"Inglaterra vs Croacia", originalMatch:"Inglaterra v Croacia", result: null, isPast: false, group:"Grupo L", stadium:"Estadio Dallas" },
+                { timeET:"19:00", match:"Ghana vs Panama", originalMatch:"Ghana v Panama", result: null, isPast: false, group:"Grupo L", stadium:"Estadio Toronto" },
+                { timeET:"22:00", match:"Uzbekistan vs Colombia", originalMatch:"Uzbekistan v Colombia", result: null, isPast: false, group:"Grupo K", stadium:"Estadio Ciudad de Mexico" }
+            ],
+            "JUEVES 18 JUNIO": [
+                { timeET:"12:00", match:"Republica Checa vs Sudafrica", originalMatch:"Republica Checa v Sudafrica", result: null, isPast: false, group:"Grupo A", stadium:"Estadio Atlanta" },
+                { timeET:"15:00", match:"Suiza vs Bosnia y Herzegovina", originalMatch:"Suiza v Bosnia y Herzegovina", result: null, isPast: false, group:"Grupo B", stadium:"Estadio Los Angeles" },
+                { timeET:"18:00", match:"Canada vs Catar", originalMatch:"Canada v Catar", result: null, isPast: false, group:"Grupo B", stadium:"Estadio BC Place Vancouver" },
+                { timeET:"21:00", match:"Mexico vs Republica de Corea", originalMatch:"Mexico v Republica de Corea", result: null, isPast: false, group:"Grupo A", stadium:"Estadio Guadalajara" }
+            ],
+            "VIERNES 19 JUNIO": [
+                { timeET:"15:00", match:"Estados Unidos vs Australia", originalMatch:"Estados Unidos v Australia", result: null, isPast: false, group:"Grupo D", stadium:"Estadio Seattle" },
+                { timeET:"18:00", match:"Escocia vs Marruecos", originalMatch:"Escocia v Marruecos", result: null, isPast: false, group:"Grupo C", stadium:"Estadio Boston" },
+                { timeET:"21:00", match:"Brasil vs Haiti", originalMatch:"Brasil v Haiti", result: null, isPast: false, group:"Grupo C", stadium:"Estadio Filadelfia" },
+                { timeET:"00:00", match:"Turquia vs Paraguay", originalMatch:"Turquia v Paraguay", result: null, isPast: false, group:"Grupo D", stadium:"Estadio Bahia de San Francisco" }
+            ],
+            "SABADO 20 JUNIO": [
+                { timeET:"13:00", match:"Paises Bajos vs Suecia", originalMatch:"Paises Bajos v Suecia", result: null, isPast: false, group:"Grupo F", stadium:"Estadio Houston" },
+                { timeET:"16:00", match:"Alemania vs Costa de Marfil", originalMatch:"Alemania v Costa de Marfil", result: null, isPast: false, group:"Grupo E", stadium:"Estadio Toronto" },
+                { timeET:"22:00", match:"Ecuador vs Curazao", originalMatch:"Ecuador v Curazao", result: null, isPast: false, group:"Grupo E", stadium:"Estadio Kansas City" },
+                { timeET:"00:00", match:"Tunez vs Japon", originalMatch:"Tunez v Japon", result: null, isPast: false, group:"Grupo F", stadium:"Estadio Monterrey" }
+            ],
+            "DOMINGO 21 JUNIO": [
+                { timeET:"12:00", match:"Espana vs Arabia Saudi", originalMatch:"Espana v Arabia Saudi", result: null, isPast: false, group:"Grupo H", stadium:"Estadio Atlanta" },
+                { timeET:"15:00", match:"Belgica vs Iran", originalMatch:"Belgica v Iran", result: null, isPast: false, group:"Grupo G", stadium:"Estadio Los Angeles" },
+                { timeET:"18:00", match:"Uruguay vs Cabo Verde", originalMatch:"Uruguay v Cabo Verde", result: null, isPast: false, group:"Grupo H", stadium:"Estadio Miami" },
+                { timeET:"21:00", match:"Nueva Zelanda vs Egipto", originalMatch:"Nueva Zelanda v Egipto", result: null, isPast: false, group:"Grupo G", stadium:"Estadio BC Place Vancouver" }
+            ],
+            "LUNES 22 JUNIO": [
+                { timeET:"13:00", match:"Argentina vs Austria", originalMatch:"Argentina v Austria", result: null, isPast: false, group:"Grupo J", stadium:"Estadio Dallas" },
+                { timeET:"17:00", match:"Francia vs Irak", originalMatch:"Francia v Irak", result: null, isPast: false, group:"Grupo I", stadium:"Estadio Filadelfia" },
+                { timeET:"20:00", match:"Noruega vs Senegal", originalMatch:"Noruega v Senegal", result: null, isPast: false, group:"Grupo I", stadium:"Estadio Nueva York Nueva Jersey" },
+                { timeET:"23:00", match:"Jordania vs Argelia", originalMatch:"Jordania v Argelia", result: null, isPast: false, group:"Grupo J", stadium:"Estadio Bahia de San Francisco Bay" }
+            ],
+            "MARTES 23 JUNIO": [
+                { timeET:"13:00", match:"Portugal vs Uzbekistan", originalMatch:"Portugal v Uzbekistan", result: null, isPast: false, group:"Grupo K", stadium:"Estadio Houston" },
+                { timeET:"16:00", match:"Inglaterra vs Ghana", originalMatch:"Inglaterra v Ghana", result: null, isPast: false, group:"Grupo L", stadium:"Estadio Boston" },
+                { timeET:"19:00", match:"Panama vs Croacia", originalMatch:"Panama v Croacia", result: null, isPast: false, group:"Grupo L", stadium:"Estadio Toronto" },
+                { timeET:"22:00", match:"Colombia vs RD Congo", originalMatch:"Colombia v RD Congo", result: null, isPast: false, group:"Grupo K", stadium:"Estadio Guadalajara" }
+            ],
+            "MIERCOLES 24 JUNIO": [
+                { timeET:"15:00", match:"Suiza vs Canada", originalMatch:"Suiza v Canada", result: null, isPast: false, group:"Grupo B", stadium:"Estadio BC Place Vancouver" },
+                { timeET:"15:00", match:"Bosnia y Herzegovina vs Catar", originalMatch:"Bosnia y Herzegovina v Catar", result: null, isPast: false, group:"Grupo B", stadium:"Estadio Seattle" },
+                { timeET:"18:00", match:"Escocia vs Brasil", originalMatch:"Escocia v Brasil", result: null, isPast: false, group:"Grupo C", stadium:"Estadio Miami" },
+                { timeET:"18:00", match:"Marruecos vs Haiti", originalMatch:"Marruecos v Haiti", result: null, isPast: false, group:"Grupo C", stadium:"Estadio Atlanta" },
+                { timeET:"21:00", match:"Republica Checa vs Mexico", originalMatch:"Republica Checa v Mexico", result: null, isPast: false, group:"Grupo A", stadium:"Estadio Ciudad de Mexico" },
+                { timeET:"21:00", match:"Sudafrica vs Republica de Corea", originalMatch:"Sudafrica v Republica de Corea", result: null, isPast: false, group:"Grupo A", stadium:"Estadio Monterrey" }
+            ],
+            "JUEVES 25 JUNIO": [
+                { timeET:"16:00", match:"Curazao vs Costa de Marfil", originalMatch:"Curazao v Costa de Marfil", result: null, isPast: false, group:"Grupo E", stadium:"Estadio Filadelfia" },
+                { timeET:"16:00", match:"Ecuador vs Alemania", originalMatch:"Ecuador v Alemania", result: null, isPast: false, group:"Grupo E", stadium:"Estadio Nueva York Nueva Jersey" },
+                { timeET:"19:00", match:"Japon vs Suecia", originalMatch:"Japon v Suecia", result: null, isPast: false, group:"Grupo F", stadium:"Estadio Dallas" },
+                { timeET:"19:00", match:"Tunez vs Paises Bajos", originalMatch:"Tunez v Paises Bajos", result: null, isPast: false, group:"Grupo F", stadium:"Estadio Kansas City" },
+                { timeET:"22:00", match:"Turquia vs Estados Unidos", originalMatch:"Turquia v Estados Unidos", result: null, isPast: false, group:"Grupo D", stadium:"Estadio Los Angeles" },
+                { timeET:"22:00", match:"Paraguay vs Australia", originalMatch:"Paraguay v Australia", result: null, isPast: false, group:"Grupo D", stadium:"Estadio Bahia de San Francisco" }
+            ],
+            "VIERNES 26 JUNIO": [
+                { timeET:"15:00", match:"Noruega vs Francia", originalMatch:"Noruega v Francia", result: null, isPast: false, group:"Grupo I", stadium:"Estadio Boston" },
+                { timeET:"15:00", match:"Senegal vs Irak", originalMatch:"Senegal v Irak", result: null, isPast: false, group:"Grupo I", stadium:"Estadio Toronto" },
+                { timeET:"20:00", match:"Cabo Verde vs Arabia Saudi", originalMatch:"Cabo Verde v Arabia Saudi", result: null, isPast: false, group:"Grupo H", stadium:"Estadio Houston" },
+                { timeET:"20:00", match:"Uruguay vs Espana", originalMatch:"Uruguay v Espana", result: null, isPast: false, group:"Grupo H", stadium:"Estadio Guadalajara" },
+                { timeET:"23:00", match:"Egipto vs Iran", originalMatch:"Egipto v Iran", result: null, isPast: false, group:"Grupo G", stadium:"Estadio Seattle" },
+                { timeET:"23:00", match:"Nueva Zelanda vs Belgica", originalMatch:"Nueva Zelanda v Belgica", result: null, isPast: false, group:"Grupo G", stadium:"Estadio BC Place Vancouver" }
+            ],
+            "SABADO 27 JUNIO": [
+                { timeET:"17:00", match:"Panama vs Inglaterra", originalMatch:"Panama v Inglaterra", result: null, isPast: false, group:"Grupo L", stadium:"Estadio Nueva York Nueva Jersey" },
+                { timeET:"17:00", match:"Croacia vs Ghana", originalMatch:"Croacia v Ghana", result: null, isPast: false, group:"Grupo L", stadium:"Estadio Filadelfia" },
+                { timeET:"19:30", match:"Colombia vs Portugal", originalMatch:"Colombia v Portugal", result: null, isPast: false, group:"Grupo K", stadium:"Estadio Miami" },
+                { timeET:"19:30", match:"RD Congo vs Uzbekistan", originalMatch:"RD Congo v Uzbekistan", result: null, isPast: false, group:"Grupo K", stadium:"Estadio Atlanta" },
+                { timeET:"22:00", match:"Argelia vs Austria", originalMatch:"Argelia v Austria", result: null, isPast: false, group:"Grupo J", stadium:"Estadio Kansas City" },
+                { timeET:"22:00", match:"Jordania vs Argentina", originalMatch:"Jordania v Argentina", result: null, isPast: false, group:"Grupo J", stadium:"Estadio Dallas" }
+            ]
         };
 
-        const knockoutRounds = [
-            { round: "DIECISEISAVOS DE FINAL", matches: [
-                { date: "28 de junio", match: "2o Grupo A vs 2o Grupo B", stadium: "Los Angeles" },
-                { date: "29 de junio", match: "1o Grupo E vs 3o A/B/C/D/F", stadium: "Boston" },
-                { date: "29 de junio", match: "1o Grupo F vs 2o Grupo C", stadium: "Monterrey" },
-                { date: "29 de junio", match: "1o Grupo C vs 2o Grupo F", stadium: "Houston" },
-                { date: "30 de junio", match: "1o Grupo I vs 3o C/D/F/G/H", stadium: "Nueva York" },
-                { date: "30 de junio", match: "2o Grupo E vs 2o Grupo I", stadium: "Dallas" },
-                { date: "30 de junio", match: "1o Grupo A vs 3o C/E/F/H/I", stadium: "Ciudad de Mexico" },
-                { date: "1 de julio", match: "1o Grupo L vs 3o E/H/I/J/K", stadium: "Atlanta" },
-                { date: "1 de julio", match: "1o Grupo D vs 3o B/E/F/I/J", stadium: "Bahia de San Francisco" },
-                { date: "1 de julio", match: "1o Grupo G vs 3o A/E/H/I/J", stadium: "Seattle" },
-                { date: "2 de julio", match: "2o Grupo K vs 2o Grupo L", stadium: "Toronto" },
-                { date: "2 de julio", match: "1o Grupo H vs 2o Grupo J", stadium: "Los Angeles" },
-                { date: "2 de julio", match: "1o Grupo B vs 3o E/F/G/I/J", stadium: "Vancouver" },
-                { date: "3 de julio", match: "1o Grupo J vs 2o Grupo H", stadium: "Miami" },
-                { date: "3 de julio", match: "1o Grupo K vs 3o D/E/I/J/L", stadium: "Kansas City" },
-                { date: "3 de julio", match: "2o Grupo D vs 2o Grupo G", stadium: "Dallas" }
-            ]},
-            { round: "OCTAVOS DE FINAL", matches: [
-                { date: "4 de julio", match: "Gana Partido 74 vs Gana Partido 77", stadium: "Filadelfia" },
-                { date: "4 de julio", match: "Gana Partido 73 vs Gana Partido 75", stadium: "Houston" },
-                { date: "5 de julio", match: "Gana Partido 76 vs Gana Partido 78", stadium: "Nueva York" },
-                { date: "5 de julio", match: "Gana Partido 79 vs Gana Partido 80", stadium: "Ciudad de Mexico" },
-                { date: "6 de julio", match: "Gana Partido 83 vs Gana Partido 84", stadium: "Dallas" },
-                { date: "6 de julio", match: "Gana Partido 81 vs Gana Partido 82", stadium: "Seattle" },
-                { date: "7 de julio", match: "Gana Partido 86 vs Gana Partido 88", stadium: "Atlanta" },
-                { date: "7 de julio", match: "Gana Partido 85 vs Gana Partido 87", stadium: "Vancouver" }
-            ]},
-            { round: "CUARTOS DE FINAL", matches: [
-                { date: "9 de julio", match: "Gana Partido 89 vs Gana Partido 90", stadium: "Boston" },
-                { date: "10 de julio", match: "Gana Partido 93 vs Gana Partido 94", stadium: "Los Angeles" },
-                { date: "11 de julio", match: "Gana Partido 91 vs Gana Partido 92", stadium: "Miami" },
-                { date: "11 de julio", match: "Gana Partido 95 vs Gana Partido 96", stadium: "Kansas City" }
-            ]},
-            { round: "SEMIFINALES", matches: [
-                { date: "14 de julio", match: "Gana Partido 97 vs Gana Partido 98", stadium: "Dallas" },
-                { date: "15 de julio", match: "Gana Partido 99 vs Gana Partido 100", stadium: "Atlanta" }
-            ]},
-            { round: "TERCER PUESTO", matches: [
-                { date: "18 de julio", match: "Perdedor Semifinal 1 vs Perdedor Semifinal 2", stadium: "Miami" }
-            ]},
-            { round: "FINAL", matches: [
-                { date: "19 de julio", match: "Ganador Semifinal 1 vs Ganador Semifinal 2", stadium: "Nueva York Nueva Jersey" }
-            ]}
-        ];
+        // Función para obtener la fecha base de un partido según el día
+        function getMatchDate(dayStr, hour24, minute) {
+            let month = 5; // Junio (0-indexado)
+            let day = 11;
+            if (dayStr.includes("11")) day = 11;
+            else if (dayStr.includes("12")) day = 12;
+            else if (dayStr.includes("13")) day = 13;
+            else if (dayStr.includes("14")) day = 14;
+            else if (dayStr.includes("15")) day = 15;
+            else if (dayStr.includes("16")) day = 16;
+            else if (dayStr.includes("17")) day = 17;
+            else if (dayStr.includes("18")) day = 18;
+            else if (dayStr.includes("19")) day = 19;
+            else if (dayStr.includes("20")) day = 20;
+            else if (dayStr.includes("21")) day = 21;
+            else if (dayStr.includes("22")) day = 22;
+            else if (dayStr.includes("23")) day = 23;
+            else if (dayStr.includes("24")) day = 24;
+            else if (dayStr.includes("25")) day = 25;
+            else if (dayStr.includes("26")) day = 26;
+            else if (dayStr.includes("27")) day = 27;
+            
+            // Ajuste para partidos que pasan de medianoche
+            let finalHour = hour24;
+            let finalDay = day;
+            if (hour24 < 6 && day > 11) {
+                finalDay = day + 1;
+            }
+            
+            return new Date(2026, month, finalDay, finalHour, minute, 0, 0);
+        }
 
+        // Construir calendario
         function buildCalendar() {
             const container = document.getElementById('calendarContainer');
             if (!container) return;
             let html = '';
+            const now = new Date();
             
-            for (const [day, matches] of Object.entries(matchesByDay)) {
+            for (const [day, matches] of Object.entries(matchesData)) {
                 html += `<div class="day-modern"><div class="day-header"> ${day} · FASE DE GRUPOS</div>`;
-                matches.forEach(m => {
+                matches.forEach((m, idx) => {
                     const mexicoTime = convertToMexicoCityTime(m.timeET);
-                    html += `<div class="match-row">
+                    const { hour, minute } = getHour24FromET(m.timeET);
+                    const matchId = `${day}_${idx}_${m.originalMatch.replace(/\s/g, '_')}`;
+                    const matchName = m.originalMatch;
+                    const matchDate = getMatchDate(day, hour, minute);
+                    const isPast = matchDate < now;
+                    const displayMatch = isPast ? m.match : m.originalMatch.replace('v', 'vs');
+                    
+                    html += `<div class="match-row" data-match-id="${matchId}" data-match-name="${matchName}" data-match-time="${matchDate.toISOString()}">
                                 <div class="match-time">${mexicoTime}</div>
-                                <div class="match-name">${m.match} <span class="group-badge">${m.group}</span></div>
-                                <div class="match-stadium"> ${m.stadium}</div>
-                             </div>`;
+                                <div class="match-name">${displayMatch} <span class="group-badge">${m.group}</span></div>
+                                <div class="match-stadium"> ${m.stadium}</div>`;
+                    
+                    if (isPast) {
+                        html += `<button class="notify-btn" disabled style="opacity:0.5;">✅ Finalizado</button>`;
+                    } else {
+                        html += `<button class="notify-btn" data-match-id="${matchId}" data-match-name="${matchName}" data-match-time="${matchDate.toISOString()}">🔔 Notificarme</button>`;
+                    }
+                    html += `</div>`;
                 });
                 html += `</div>`;
             }
+            
+            // Eliminatorias
+            const knockoutRounds = [
+                { round: "DIECISEISAVOS DE FINAL", matches: [
+                    "28 de junio: 2o Grupo A vs 2o Grupo B - Los Angeles",
+                    "29 de junio: 1o Grupo E vs 3o A/B/C/D/F - Boston",
+                    "29 de junio: 1o Grupo F vs 2o Grupo C - Monterrey",
+                    "29 de junio: 1o Grupo C vs 2o Grupo F - Houston",
+                    "30 de junio: 1o Grupo I vs 3o C/D/F/G/H - Nueva York",
+                    "30 de junio: 2o Grupo E vs 2o Grupo I - Dallas",
+                    "30 de junio: 1o Grupo A vs 3o C/E/F/H/I - Ciudad de Mexico",
+                    "1 de julio: 1o Grupo L vs 3o E/H/I/J/K - Atlanta",
+                    "1 de julio: 1o Grupo D vs 3o B/E/F/I/J - Bahia de San Francisco",
+                    "1 de julio: 1o Grupo G vs 3o A/E/H/I/J - Seattle",
+                    "2 de julio: 2o Grupo K vs 2o Grupo L - Toronto",
+                    "2 de julio: 1o Grupo H vs 2o Grupo J - Los Angeles",
+                    "2 de julio: 1o Grupo B vs 3o E/F/G/I/J - Vancouver",
+                    "3 de julio: 1o Grupo J vs 2o Grupo H - Miami",
+                    "3 de julio: 1o Grupo K vs 3o D/E/I/J/L - Kansas City",
+                    "3 de julio: 2o Grupo D vs 2o Grupo G - Dallas"
+                ]},
+                { round: "OCTAVOS DE FINAL", matches: [
+                    "4 de julio: Gana Partido 74 vs Gana Partido 77 - Filadelfia",
+                    "4 de julio: Gana Partido 73 vs Gana Partido 75 - Houston",
+                    "5 de julio: Gana Partido 76 vs Gana Partido 78 - Nueva York",
+                    "5 de julio: Gana Partido 79 vs Gana Partido 80 - Ciudad de Mexico",
+                    "6 de julio: Gana Partido 83 vs Gana Partido 84 - Dallas",
+                    "6 de julio: Gana Partido 81 vs Gana Partido 82 - Seattle",
+                    "7 de julio: Gana Partido 86 vs Gana Partido 88 - Atlanta",
+                    "7 de julio: Gana Partido 85 vs Gana Partido 87 - Vancouver"
+                ]},
+                { round: "CUARTOS DE FINAL", matches: [
+                    "9 de julio: Gana Partido 89 vs Gana Partido 90 - Boston",
+                    "10 de julio: Gana Partido 93 vs Gana Partido 94 - Los Angeles",
+                    "11 de julio: Gana Partido 91 vs Gana Partido 92 - Miami",
+                    "11 de julio: Gana Partido 95 vs Gana Partido 96 - Kansas City"
+                ]},
+                { round: "SEMIFINALES", matches: [
+                    "14 de julio: Gana Partido 97 vs Gana Partido 98 - Dallas",
+                    "15 de julio: Gana Partido 99 vs Gana Partido 100 - Atlanta"
+                ]},
+                { round: "TERCER PUESTO", matches: ["18 de julio: Perdedor Semifinal 1 vs Perdedor Semifinal 2 - Miami"] },
+                { round: "FINAL", matches: ["19 de julio: Ganador Semifinal 1 vs Ganador Semifinal 2 - Nueva York Nueva Jersey"] }
+            ];
             
             html += `<div style="margin-top: 2rem;"><h3 style="color:#CDD98D; margin-bottom:1rem;"> ELIMINATORIAS DIRECTAS</h3>`;
             knockoutRounds.forEach(round => {
                 html += `<div class="knockout-card"><div class="knockout-title"> ${round.round}</div>`;
                 round.matches.forEach(m => {
                     html += `<div class="match-row">
-                                <div class="match-time"> ${m.date}</div>
-                                <div class="match-name">${m.match}</div>
-                                <div class="match-stadium"> ${m.stadium}</div>
+                                <div class="match-time"> 📌</div>
+                                <div class="match-name">${m}</div>
+                                <div class="match-stadium"></div>
                              </div>`;
                 });
                 html += `</div>`;
             });
             html += `</div>`;
+            
             container.innerHTML = html;
+            
+            // Agregar event listeners a los botones de notificación (solo los no deshabilitados)
+            document.querySelectorAll('.notify-btn:not(:disabled)').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const matchId = btn.getAttribute('data-match-id');
+                    const matchName = btn.getAttribute('data-match-name');
+                    const matchTime = btn.getAttribute('data-match-time');
+                    
+                    if (!notificationPermission) {
+                        requestNotificationPermission();
+                        setTimeout(() => {
+                            if (notificationPermission) {
+                                const scheduled = scheduleMatchNotification(matchId, matchName, matchTime);
+                                if (scheduled) {
+                                    btn.classList.add('active');
+                                    btn.textContent = '✅ Notificado';
+                                    showNotification('🔔 Notificación agendada', `Te avisaremos cuando ${matchName} esté por comenzar`);
+                                }
+                            }
+                        }, 500);
+                    } else {
+                        const scheduled = scheduleMatchNotification(matchId, matchName, matchTime);
+                        if (scheduled) {
+                            btn.classList.add('active');
+                            btn.textContent = '✅ Notificado';
+                            showNotification('🔔 Notificación agendada', `Te avisaremos cuando ${matchName} esté por comenzar`);
+                        }
+                    }
+                });
+            });
         }
+
         buildCalendar();
 
+        // ==============================================================
+        // SERVIDORES
+        // ==============================================================
         const servers = [
             { name:"DSports HD", url:"https://stream-xhd.com/live1.php?stream=dsports", cat:"Deportes" },
             { name:"DIRECTV SPORTS", url:"https://canalesdeportivos.net/directvsports.php", cat:"Futbol" },
@@ -849,6 +1142,8 @@
                 }
             });
         }
+        
+        requestNotificationPermission();
     })();
 </script>
 </body>
